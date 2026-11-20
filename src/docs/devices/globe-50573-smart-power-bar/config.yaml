@@ -1,0 +1,58 @@
+# Globe 50573 Smart Power Bar (Canadian Tire #052-9314-6)
+# Module: Tuya CB3S (Beken BK7231N)
+#
+# GPIO map recovered from the stock Tuya firmware configuration
+# (user_param_key): relays P8/P6/P24/P26 (active high),
+# status LED P9 (active low), button P7 (active low).
+# The 2 USB ports are always powered and not switchable.
+
+esphome:
+  name: globe-50573
+  friendly_name: Globe 50573 Power Bar
+
+bk72xx:
+  board: cb3s
+
+# Wi-Fi status LED (active low)
+status_led:
+  pin:
+    number: P9
+    inverted: true
+
+switch:
+  - platform: gpio
+    id: relay1
+    name: Outlet 1
+    pin: P8
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: gpio
+    id: relay2
+    name: Outlet 2
+    pin: P6
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: gpio
+    id: relay3
+    name: Outlet 3
+    pin: P24
+    restore_mode: RESTORE_DEFAULT_ON
+  - platform: gpio
+    id: relay4
+    name: Outlet 4
+    pin: P26
+    restore_mode: RESTORE_DEFAULT_ON
+
+# Top button: short press toggles all outlets (stock firmware behavior)
+binary_sensor:
+  - platform: gpio
+    id: button
+    name: Power Button
+    pin:
+      number: P7
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      then:
+        - switch.toggle: relay1
+        - switch.toggle: relay2
+        - switch.toggle: relay3
+        - switch.toggle: relay4
